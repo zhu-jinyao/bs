@@ -1,7 +1,7 @@
 from umqtt.simple import MQTTClient
 import utime
-from temperature_test import readData
-from ADC_test import adc_mean
+from temperature import readData
+from light import adc_mean
 
 SERVER = '192.168.43.16'
 CLIENT_ID = '10fcafbd10da4bc2b25feb1e9ea499a8' # 客户端的ID，不可重复，尽量使用云平台的设备号

@@ -19,7 +19,7 @@ def culculate_temp():
         oi.fan_period=5#二档默认转速；一个正波形10ms，导通最后的5ms
     elif(diff>6)|(diff<6)|(diff==6) :#30~35摄氏度
         oi.fan_period=8#三档转速；一个正波形10ms，导通最后的8ms
-    else #高于35摄氏度
+    else: #高于35摄氏度
         oi.fan_period=0#全功率转速；一个正波形10ms全导通
 
 ''' h=d.humidity()

@@ -1,12 +1,20 @@
 import _thread
-from machine import utime
+from machine import utime,Pin
 import wifi
 import mqtt_sub,mqtt_pub
 import infrared_test
 import moto
 import temperature
 import light
+import outer_interrupt as oi
 
+def testThread_infrared():##读取热释电传感器，获取人体存在信息;有人则进行过零检测，在合适时机开始控制风扇、LED灯导通
+    while 1:
+        if infrared_test.infrared.value()==1:
+            infrared_test.wdt.feed()
+            infrared_test.outer_inter.irq(handler=oi.zero_crossing,trigger=Pin.IRQ_FALLING)
+        utime.sleep(2)
+        
 def testThread_sub():##订阅风扇、LED灯控制信息
     while 1:
         mqtt_sub.client.check_msg()
@@ -18,12 +26,7 @@ def testThread_pub():##发布温度、亮度信息
         mqtt_pub.client.publish(mqtt_pub.TOPIC_LED, mqtt_pub.l)#每3S发布一次温度数据
         utime.sleep(3)
 
-def testThread_infrared():##读取热释电传感器，获取人体存在信息;有人则进行过零检测，在合适时机开始控制风扇、LED灯导通
-    while 1:
-        if infrared.value()==1:
-            wdt.feed()
-            outer_inter.irq(handler=oi.zero_crossing,trigger=Pin.IRQ_FALLING)
-        utime.sleep(2)
+
 
 
 def testThread_moto():##驱动电机正反转动
@@ -32,19 +35,19 @@ def testThread_moto():##驱动电机正反转动
 
 def testThread_temperature():
     while 1:
-        readData()
+        temperature.readData()
         utime.sleep(3)
-        culculate_temp()
+        temperature.culculate_temp()
 
 def testThread_light():
     while 1:
-        adc_mean(light.adc,10)
+        light.adc_mean(light.adc,10)
         utime.sleep(3)
-        culculate_light()
+        light.culculate_light()
 
 def testThread_ctrl():
     while 1:
-        zero_crossing()
+        oi.zero_crossing()
 
 
 wifi.do_connect()#先连接WiFi
